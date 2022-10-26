@@ -1,9 +1,9 @@
-thumbnail          = "6938fd4d98bab03faadb97b34396831e3780aea1"
-stack_name         = "python-package-index"
+thumbnail  = "6938fd4d98bab03faadb97b34396831e3780aea1"
+stack_name = "python-package-index"
 availability_zones = {
-    dev = ["us-east-1a", "us-east-1b", "us-east-1c"]
-    staging = ["us-west-1a", "us-west-1b", "us-west-1c"]
-    prod = ["us-west-1a", "us-west-1b", "us-west-1c"]
+  dev     = ["us-east-1a", "us-east-1b", "us-east-1c"]
+  staging = ["us-west-1a", "us-west-1b", "us-west-1c"]
+  prod    = ["us-west-1a", "us-west-1b", "us-west-1c"]
 }
 cidr_block = {
   dev     = "10.47.0.0/22"

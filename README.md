@@ -61,7 +61,7 @@ module "dev_vpc" {
   nat_gateway_count     = var.nat_gateway_count
   elastic_ips           = var.elastic_ips
   providers = {
-    aws = aws.robotics_robot_stack_dev
+    aws = aws.dev
   }
 }
 ```

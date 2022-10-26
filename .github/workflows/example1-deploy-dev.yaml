@@ -1,0 +1,80 @@
+on:
+  push:
+    branches:
+      - "*"
+    paths:
+      - "inf/python-package-index/**/*"
+      - "inf/modules/**/*"
+      - ".github/workflows/ppi-terraform-deploy-dev.yaml"
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
+  pull-requests: write
+
+jobs:
+  deploy-terraform-configurations-to-python-package-index-stack-dev:
+    runs-on: "ubuntu-latest"
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.3.0
+          terraform_wrapper: false
+      - name: Setup authentication to backend-s3 #Method 1
+        run: |
+          mkdir -p ~/.aws
+
+          cat <<EOF >~/.aws/config
+          ${{ secrets.ROLE }}
+          EOF
+
+          cat <<EOF >~/.aws/credentials
+          ${{ secrets.ROLE_AUTH }}
+          EOF
+      - name: Terraform Init
+        id: init
+        run: terraform init
+        working-directory: inf/python-package-index
+        shell: bash
+      - name: Terraform Workspace
+        id: workspace-setup
+        run: terraform workspace select dev
+        working-directory: inf/python-package-index
+        shell: bash
+      - name: Terraform Format
+        id: fmt
+        run: terraform fmt -check
+        working-directory: inf/python-package-index
+        shell: bash
+      - name: Terraform Validate
+        id: validate
+        run: terraform validate -no-color
+        working-directory: inf/python-package-index
+        shell: bash
+      - name: Terraform Plan
+        id: plan
+        run: |
+          terraform plan -input=false -var-file=ppi.tfvars -no-color -out tf_plan_dev
+        working-directory: inf/python-package-index
+        shell: bash
+      - name: Terraform Show
+        id: show
+        run: |
+          terraform show -no-color tf_plan_dev 2>&1 | tee /tmp/tf_plan_dev.txt
+        working-directory: inf/python-package-index
+        shell: bash
+      - name: Upload plan
+        uses: "actions/upload-artifact@v3"
+        with:
+          name: "tf_plan_dev.txt"
+          path: /tmp/tf_plan_dev.txt
+      - name: Terraform Apply
+        if: github.ref == 'refs/heads/main'
+        run: |
+          terraform apply -input=false tf_plan_dev
+        working-directory: inf/python-package-index
+        shell: bash

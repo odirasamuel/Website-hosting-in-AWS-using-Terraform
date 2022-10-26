@@ -38,10 +38,14 @@ jobs:
         run: |
           aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }} --profile identity
           aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }} --profile identity
+          aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }} --profile odira
+          aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }} --profile odira
       - name: Add config for profiles in ~/.aws/config
         run: |
           aws configure set region us-east-2 --profile identity
           aws configure set output json --profile identity
+          aws configure set region us-east-2 --profile odira
+          aws configure set output json --profile odira
           aws configure set region us-east-2 --profile terraform-state
           aws configure set role_arn "arn:aws:iam::592830654455:role/terraform-deployers" --profile terraform-state
           aws configure set source_profile identity --profile terraform-state
@@ -51,6 +55,9 @@ jobs:
           aws configure set region us-east-2 --profile robotics_robot_stack_prod-admin
           aws configure set role_arn arn:aws:iam::879285218407:role/administrator --profile robotics_robot_stack_prod-admin
           aws configure set source_profile identity --profile robotics_robot_stack_prod-admin
+          aws configure set region us-east-2 --profile odira
+          aws configure set role_arn arn:aws:iam::402888776145:role/administrator --profile odira
+          aws configure set source_profile identity --profile odira
       - name: Terraform Init
         id: init
         run: terraform init

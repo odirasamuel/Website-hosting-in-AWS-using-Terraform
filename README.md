@@ -51,7 +51,7 @@ Add the module block below to the `vpc.tf`
 ```terraform
 module "dev_vpc" {
   count                 = (terraform.workspace == "dev") ? 1 : 0
-  source                = "./modules/vpc"
+  source                = "../modules/vpc"
   availability_zones    = var.availability_zones
   cidr_block            = var.cidr_block
   public_subnets_count  = var.public_subnets_count

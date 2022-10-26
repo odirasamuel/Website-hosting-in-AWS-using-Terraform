@@ -15,7 +15,7 @@ variable "private_subnets_cidr" {
 
 variable "availability_zones" {
   description = "Availability Zones"
-  type        = list(string)
+  type        = map(list(string))
 }
 
 variable "private_subnets_count" {
